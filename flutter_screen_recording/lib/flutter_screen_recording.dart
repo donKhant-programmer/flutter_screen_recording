@@ -70,38 +70,51 @@ class FlutterScreenRecording {
   }
 
   static _maybeStartFGS(String titleNotification, String messageNotification) {
-    try {
-      if (!kIsWeb && Platform.isAndroid) {
-        FlutterForegroundTask.init(
-          androidNotificationOptions: AndroidNotificationOptions(
-            channelId: 'notification_channel_id',
-            channelName: titleNotification,
-            channelDescription: messageNotification,
-            channelImportance: NotificationChannelImportance.LOW,
-            priority: NotificationPriority.LOW,
-            // iconData: const NotificationIconData(
-            //   resType: ResourceType.mipmap,
-            //   resPrefix: ResourcePrefix.ic,
-            //   name: 'launcher',
-            // ),
-          ),
-          iosNotificationOptions: const IOSNotificationOptions(
-            showNotification: true,
-            playSound: false,
-          ),
-          foregroundTaskOptions: ForegroundTaskOptions(
-  eventAction: DefaultForegroundTaskEventHandler(), // or your custom one
-),
-          // foregroundTaskOptions: const ForegroundTaskOptions(
-          //   // interval: 5000,
-          //   autoRunOnBoot: true,
-          //   allowWifiLock: true,
-          // ),
-        );
-      }
-    } catch (err) {
-      print("_maybeStartFGS err");
-      print(err);
+  try {
+    if (!kIsWeb && Platform.isAndroid) {
+      FlutterForegroundTask.init(
+        androidNotificationOptions: AndroidNotificationOptions(
+          channelId: 'notification_channel_id',
+          channelName: titleNotification,
+          channelDescription: messageNotification,
+          channelImportance: NotificationChannelImportance.LOW,
+          priority: NotificationPriority.LOW,
+        ),
+        iosNotificationOptions: const IOSNotificationOptions(
+          showNotification: true,
+          playSound: false,
+        ),
+        foregroundTaskOptions: ForegroundTaskOptions(
+          eventAction: SimpleEventHandler(),
+          autoRunOnBoot: true,
+          allowWifiLock: true,
+        ),
+      );
     }
+  } catch (err) {
+    print("_maybeStartFGS err");
+    print(err);
   }
 }
+
+}
+
+class SimpleEventHandler extends TaskEventHandler {
+  @override
+  Future<void> onStart(DateTime timestamp, SendPort? sendPort) async {}
+
+  @override
+  Future<void> onEvent(DateTime timestamp, SendPort? sendPort) async {}
+
+  @override
+  Future<void> onDestroy(DateTime timestamp, SendPort? sendPort) async {}
+
+  @override
+  void onButtonPressed(String id) {}
+
+  @override
+  void onNotificationPressed() {
+    FlutterForegroundTask.launchApp();
+  }
+}
+
