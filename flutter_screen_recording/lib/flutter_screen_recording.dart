@@ -89,11 +89,14 @@ class FlutterScreenRecording {
             showNotification: true,
             playSound: false,
           ),
-          foregroundTaskOptions: const ForegroundTaskOptions(
-            // interval: 5000,
-            autoRunOnBoot: true,
-            allowWifiLock: true,
-          ),
+          foregroundTaskOptions: ForegroundTaskOptions(
+  eventAction: DefaultForegroundTaskEventHandler(), // or your custom one
+),
+          // foregroundTaskOptions: const ForegroundTaskOptions(
+          //   // interval: 5000,
+          //   autoRunOnBoot: true,
+          //   allowWifiLock: true,
+          // ),
         );
       }
     } catch (err) {
